@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 export default function Testimonials() {
   const testimonials = [
@@ -25,25 +26,62 @@ export default function Testimonials() {
     },
   ];
 
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: i * 0.2, ease: "easeOut" },
+    }),
+  };
+
   return (
-    <div className="w-full px-6 md:px-16 py-20 max-w-7xl mx-auto">
+    <section className="w-full px-6 md:px-16 py-20 max-w-7xl mx-auto overflow-hidden">
       {/* Heading */}
-      <h2 className="text-3xl md:text-4xl font-extrabold text-blue-700 mb-14 text-center">
+      <motion.h2
+        className="text-3xl md:text-4xl font-extrabold text-blue-700 mb-14 text-center"
+        initial={{ opacity: 0, y: -30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        viewport={{ once: true }}
+      >
         Love from community
-      </h2>
+      </motion.h2>
 
       {/* Testimonials Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {testimonials.map((item, index) => (
-          <div
+          <motion.div
             key={index}
-            className={`p-8 rounded-xl shadow-md border transition-all
-              ${
-                item.active
-                  ? "bg-blue-700 text-white border-blue-700"
-                  : "bg-white text-gray-700 border-gray-200"
-              }
-            `}
+            className={`p-8 rounded-xl shadow-md border transition-all ${
+              item.active
+                ? "bg-blue-700 text-white border-blue-700"
+                : "bg-white text-gray-700 border-gray-200"
+            }`}
+            custom={index}
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.03 }}
+            animate={
+              item.active
+                ? {
+                    y: [0, -10, 0],
+                  }
+                : {}
+            }
+            transition={
+              item.active
+                ? {
+                    duration: 4,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    ease: "easeInOut",
+                  }
+                : { type: "spring", stiffness: 200, damping: 15 }
+            }
           >
             {/* Quote Icon */}
             <div className="text-4xl font-bold mb-4">
@@ -56,12 +94,20 @@ export default function Testimonials() {
 
             {/* Profile Image */}
             <div className="flex flex-col items-center gap-3 mb-4">
-              <img
+              <motion.img
                 src={item.img}
                 alt={item.name}
                 className="w-20 h-20 rounded-full object-cover"
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
               />
-              <h3 className={`text-lg font-semibold ${item.active ? "text-white" : "text-gray-800"}`}>
+              <h3
+                className={`text-lg font-semibold ${
+                  item.active ? "text-white" : "text-gray-800"
+                }`}
+              >
                 {item.name}
               </h3>
             </div>
@@ -75,13 +121,19 @@ export default function Testimonials() {
               {item.message}
             </p>
 
-            {/* Bottom blue underline for active card */}
+            {/* Bottom underline for active card */}
             {item.active && (
-              <div className="w-10 h-[3px] bg-white mt-4 mx-auto rounded-full"></div>
+              <motion.div
+                className="w-10 h-[3px] bg-white mt-4 mx-auto rounded-full"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              ></motion.div>
             )}
-          </div>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

@@ -57,104 +57,133 @@ const BlogSection = () => {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+    },
   };
 
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { 
-      opacity: 1, 
+  const card = {
+    hidden: { opacity: 0, y: 40, rotateX: 10 },
+    show: {
+      opacity: 1,
       y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      }
-    }
+      rotateX: 0,
+      transition: { type: "spring", stiffness: 100, damping: 12 },
+    },
+  };
+
+  const imageAnim = {
+    hidden: { opacity: 0, scale: 1.1 },
+    show: { opacity: 1, scale: 1, transition: { duration: 0.6 } },
   };
 
   return (
-    <section className="py-16 px-6 md:px-16 bg-white">
+    <section className="py-16 px-6 md:px-16 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-10">
-          <motion.h2 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl md:text-4xl font-bold text-blue-700"
-          >
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex justify-between items-center mb-10"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-700">
             Our blogs
-          </motion.h2>
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
+          </h2>
+
+          <motion.button
+            whileHover={{
+              scale: 1.1,
+              color: "#1D34CF",
+              textDecoration: "underline",
+            }}
             whileTap={{ scale: 0.95 }}
-            className="text-[#FF4D4D] font-semibold hover:underline"
+            className="text-[#FF4D4D] font-semibold"
           >
             SHOW ALL
           </motion.button>
-        </div>
+        </motion.div>
 
         {/* Blog Cards Grid */}
-        <motion.div 
+        <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
         >
           {blogs.map((blog) => (
             <motion.div
               key={blog.id}
-              variants={item}
-              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-              className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-4 max-w-sm mx-auto w-full"
+              variants={card}
+              whileHover={{
+                y: -8,
+                rotateY: 2,
+                boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
+              }}
+              transition={{ type: "spring", stiffness: 120, damping: 10 }}
+              className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-4"
             >
-            <label className="cursor-pointer block">
-              <img
-                src={blog.image}
-                alt="Blog"
-                className="rounded-lg w-full h-52 object-cover"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => handleImageUpload(e, blog.id)}
-              />
-            </label>
+              {/* Image with animation */}
+              <motion.label
+                variants={imageAnim}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.3 }}
+                className="cursor-pointer block overflow-hidden rounded-xl"
+              >
+                <motion.img
+                  src={blog.image}
+                  alt="Blog"
+                  className="w-full h-56 object-cover rounded-xl"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e, blog.id)}
+                />
+              </motion.label>
 
-            <span className="inline-block mt-3 px-3 py-1 bg-red-100 text-red-500 text-xs font-semibold rounded">
-              {blog.category}
-            </span>
+              {/* Category with pulse effect */}
+              <motion.span
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 0.3,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+                className="inline-block mt-3 px-3 py-1 bg-red-100 text-red-500 text-xs font-semibold rounded-full"
+              >
+                {blog.category}
+              </motion.span>
 
-            <h3 className="text-lg font-bold mt-3 text-[#1a1a1a]">
-              {blog.title}
-            </h3>
-            <p className="text-sm text-gray-500 mt-2">{blog.desc}</p>
+              <h3 className="text-lg font-bold mt-3 text-[#1a1a1a] leading-snug">
+                {blog.title}
+              </h3>
+              <p className="text-sm text-gray-500 mt-2">{blog.desc}</p>
 
-            <div className="flex justify-between items-center mt-4 border-t pt-3 text-sm text-[#1a1a1a]">
-              <p className="font-semibold text-blue-600">{blog.publisher}</p>
-              <div className="flex items-center gap-1 text-gray-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M7 8h10M7 12h4m1 8a9 9 0 100-18 9 9 0 000 18z"
-                  />
-                </svg>
-                <span>{blog.comments}</span>
-              </div>
+              {/* Footer */}
+              <div className="flex justify-between items-center mt-4 border-t pt-3 text-sm text-[#1a1a1a]">
+                <p className="font-semibold text-blue-600">{blog.publisher}</p>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7 8h10M7 12h4m1 8a9 9 0 100-18 9 9 0 000 18z"
+                    />
+                  </svg>
+                  <span>{blog.comments}</span>
+                </div>
               </div>
             </motion.div>
           ))}
